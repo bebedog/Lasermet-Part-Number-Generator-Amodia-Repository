@@ -296,13 +296,14 @@ Public Class login
     End Sub
 
     Private Async Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-        Await CheckForUpdates()
-
         ToolStripStatusLabel1.Text = $"{My.Application.Info.AssemblyName} {My.Application.Info.Version.ToString}"
         Me.Text = "Lasermet Master List System"
 
         disableAllControls()
+        Await CheckForUpdates()
+
+
+
         getCategoriesfromDB()
         getUsernamesfromDB()
         enableAllControls()
