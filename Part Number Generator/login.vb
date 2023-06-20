@@ -37,8 +37,42 @@ Public Class login
 
     Private Async Function CheckForUpdates() As Task
         Try
-            Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/Part-Number-Generator")
-                Await manager.UpdateApp()
+            Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/Lasermet-Part-Number-Generator-Amodia-Repository")
+                'Await manager.UpdateApp()
+                Dim results = Await manager.CheckForUpdate()
+                Console.WriteLine(results)
+
+                'the CheckForUpdate method returns an UpdateInfo Object which has the following parameters
+
+                ' Public Class UpdateInfo
+                '{
+                '	Public ReleaseEntry CurrentlyInstalledVersion;
+                '	Public ReleaseEntry FutureReleaseEntry;
+                '	Public List<ReleaseEntry> ReleasesToApply;
+                '}
+
+                'The ReleaseEntry is an Object with the following parameters:
+
+                'public interface ReleaseEntry
+                '{
+                '    public string SHA1;
+                '    public string Filename;
+                '    public long Filesize;
+                '    public bool IsDelta;
+                '}
+                Dim numberOfUpdates As Integer = results.ReleasesToApply.Count
+                If (numberOfUpdates > 0) Then
+                    'this means that there is a new update.
+                    Dim latestVersion = results.ReleasesToApply(numberOfUpdates - 1).Version.ToString
+                    MessageBox.Show($"Lasermet Part Number Generator v{latestVersion} is now available on GitHub." + Environment.NewLine +
+                                    $"Once this instance is closed, please reopen the program.", "Update available!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    Await manager.UpdateApp()
+                    Application.Exit()
+                Else
+                    'no new update.
+                End If
+
+
             End Using
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -263,7 +297,7 @@ Public Class login
 
     Private Async Sub login_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        'Await CheckForUpdates()
+        Await CheckForUpdates()
 
         ToolStripStatusLabel1.Text = $"{My.Application.Info.AssemblyName} {My.Application.Info.Version.ToString}"
         Me.Text = "Lasermet Master List System"
