@@ -1,11 +1,27 @@
-﻿Imports System.IO
+﻿'================================================================================
+'FILE        : login.vb
+'AUTHOR      : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file shows the processes and design menu of the login page of the Part Number Generator.
+'COPYRIGHT   : dd/month/yyyy
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/04     Sigaya      Documentation
+'================================================================================
+
+' References of important packages and/or directories 
+Imports System.IO
 Imports System.Threading.Tasks
 Imports Squirrel
 Imports BCrypt.Net.BCrypt
 
+'================================================================================
+'CLASS       : login
+'DESCRIPTION : Class that stores variables, functions, and other classes for the login processes
+'================================================================================
 
 Public Class login
 
+    'declare variables as public string
     Public username As String
     Public firstname As String
     Public surname As String
@@ -15,30 +31,57 @@ Public Class login
     Public user_location As String
     Public user_mondayid As String
 
+    'Declare variables here as public instances of other classes
+    'DataTable stores data in memory. The data has columns and rows much like an actual table
     Public categoriesTable As New DataTable
+    'List is a type of resizable array. It is dynamically sized
     Public usernames As New List(Of String)
     Public usersTable As New DataTable
 
-
-    'START of Squirrel Objects
+    '================================================================================
+    'CLASS       : UpdateInfo
+    'DESCRIPTION : Class that has the variables be instances in the ReleaseEntry class
+    '================================================================================
+    '<----- START of Squirrel Objects ----->
     Public Class UpdateInfo
         Public CurrentlyInstalledVersion As ReleaseEntry
         Public FutureReleaseEntry As ReleaseEntry
         Public ReleasesToApply As List(Of ReleaseEntry)
     End Class
 
+    '================================================================================
+    'CLASS       : ReleaseEntry
+    'DESCRIPTION : Class that has the variables be declared as string. This class
+    '              holds the details of (something).
+    '================================================================================
     Public Class ReleaseEntry
         Public Property SHA1 As String
         Public Property Filename As String
         Public Property Filesize As Long
         Public Property IsDelta As Boolean
     End Class
-    'END of Squirrel Objects
+    '<----- END of Squirrel Objects ----->
 
+    '================================================================================
+    'FUNCTION   : CheckForUpdates
+    'DESCRIPTION: Checks for release updates for this program via the GitHub Repository provided.    
+    'ARGUMENTS  : None
+    'RETURNS    : Task - asynchronous operation
+    '================================================================================
+    '"Async" allows this method to be executed alongside other running processes
+    '"As Task" is the data type to be returned for this function. since this is declared as an async function
     Private Async Function CheckForUpdates() As Task
+
+        'The "Try" block will be executed first. This block might have exceptions during runtime, to which the execution will be stopped and the "catch" block will be executed next.
+        'The "Catch" block will be executed if there is an exception occured. 
+        'The "Finally" block will be executed regardless if there is an exception or not.
         Try
+            '"Using" is a statement where the object is properly discarded once the operation is done for resource saving purposes
+            '"Await" is a keyword that temporarily suspends the execution of the block or function, and delegates the execution to the method where the "Await" keyword is used
+            'UpdateManager is from Squirrel
             Using manager = Await UpdateManager.GitHubUpdateManager($"https://github.com/bebedog/Lasermet-Part-Number-Generator-Amodia-Repository")
                 'Await manager.UpdateApp()
+                '"Dim" is the variable declaration for visual basic
                 Dim results = Await manager.CheckForUpdate()
                 Console.WriteLine(results)
 
@@ -72,17 +115,22 @@ Public Class login
                     'no new update.
                 End If
 
-
             End Using
         Catch ex As Exception
             MessageBox.Show(ex.Message, "Oops, something went wrong!", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Function
 
+    '================================================================================
+    'SUBROUTINE   : checkAccountCred
+    'DESCRIPTION  : Checks for the inputted login credentials with the stored details in the PostgreSQL database.   
+    'ARGUMENTS    : None
+    '================================================================================
     Private Sub checkAccountCred()
 
         Dim passwordHash As String = BCrypt.Net.BCrypt.HashPassword(tbPassword.Text)
 
+        'check if both textboxes are empty
         If String.IsNullOrWhiteSpace(tbUsername.Text) Then
             MessageBox.Show("Please enter your username!", "No username?", MessageBoxButtons.OK, MessageBoxIcon.Error)
             enableAllControls()
@@ -93,14 +141,13 @@ Public Class login
             MessageBox.Show("Please enter your username and password!", "No username and password?", MessageBoxButtons.OK, MessageBoxIcon.Error)
             enableAllControls()
         Else
+            'if both textboxes are not empty, then connect to the database
             Call connectPostGre()
 
             Try
 
                 For Each dr As DataRow In usersTable.Rows
-
                     usernames.Add(dr(0))
-
                 Next
 
                 If usernames.IndexOf(tbUsername.Text) < 0 Then
