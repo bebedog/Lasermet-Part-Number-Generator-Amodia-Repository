@@ -37,7 +37,7 @@ Partial Class InventoryAdminDashboard
         'btnLogout
         '
         btnLogout.Name = "btnLogout"
-        btnLogout.Size = New System.Drawing.Size(117, 22)
+        btnLogout.Size = New System.Drawing.Size(180, 22)
         btnLogout.Text = "Log Out"
         AddHandler btnLogout.Click, AddressOf Me.btnLogout_Click
         '
@@ -101,7 +101,7 @@ Partial Class InventoryAdminDashboard
         'btnExit
         '
         Me.btnExit.Name = "btnExit"
-        Me.btnExit.Size = New System.Drawing.Size(117, 22)
+        Me.btnExit.Size = New System.Drawing.Size(180, 22)
         Me.btnExit.Text = "Exit"
         '
         'InventoryAdminDashboard

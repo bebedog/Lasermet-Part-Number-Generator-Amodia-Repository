@@ -1,10 +1,4 @@
 ﻿Public Class InventoryAdminDashboard
-    Private Sub btnAddPart_Click(sender As Object, e As EventArgs) Handles btnAddPart.Click
-
-        newPartOptions.Show()
-        Me.Close()
-
-    End Sub
 
     Private Sub btnSearchParts_Click(sender As Object, e As EventArgs) Handles btnSearchParts.Click
 
@@ -55,9 +49,5 @@
 
     Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
         Application.Exit()
-    End Sub
-
-    Private Sub btnAccountRequests_Click(sender As Object, e As EventArgs)
-
     End Sub
 End Class

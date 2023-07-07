@@ -1,10 +1,42 @@
-﻿Imports BCrypt.Net.BCrypt
+﻿'================================================================================
+'FILE        : RequestAccount.vb
+'AUTHORS     : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file shows the processes and design menu of the Request Account Menu of the program.
+'COPYRIGHT   : 05 July 2023
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/05     Sigaya      Documentation
+'================================================================================
 
+' References of important packages and/or directories 
+Imports BCrypt.Net.BCrypt
+
+'================================================================================
+'CLASS       : RequestAccount
+'DESCRIPTION : Class that stores variables, functions, and other classes for the Request Account Menu.
+'================================================================================
 Public Class RequestAccount
 
-    Private Async Sub createAccountRequest(firstname As String, surname As String, username As String, password As String, lasermet_email As String, location As String, department As String)
+    '================================================================================
+    'SUBROUTINE   : createAccountRequest
+    'DESCRIPTION  : Asynchronous subroutine that retrieves the inputted information of the user for creating the account,
+    '               and pushing them to the database.
+    'ARGUMENTS    : firstName, surname, username, password, lasermet_email, location, department - String
+    '================================================================================
+    Private Async Sub createAccountRequest(firstname As String,
+                                           surname As String,
+                                           username As String,
+                                           password As String,
+                                           lasermet_email As String,
+                                           location As String,
+                                           department As String)
 
+        'getMondayID function is found at the MondayAPIFunctions.vb file
         Dim monday_id As String = Await getMondayID(lasermet_email)
+        Console.WriteLine("This is the monday id: " & monday_id)
+        Dim testString As String = " - this is the concat one"
+        Console.WriteLine("This is the hardcoded text" & testString)
+        Console.ReadLine()
 
         If monday_id IsNot Nothing Or String.IsNullOrWhiteSpace(monday_id) = False Then
 
@@ -141,8 +173,12 @@ Public Class RequestAccount
 
     End Sub
 
-
-
+    '================================================================================
+    'SUBROUTINE   : createAccountRequest
+    'DESCRIPTION  : Asynchronous subroutine that retrieves the inputted information of the user for creating the account,
+    '               and pushing them to the database.
+    'ARGUMENTS    : firstName, surname, username, password, lasermet_email, location, department - String
+    '================================================================================
     Private Sub btnSendRequest_Click(sender As Object, e As EventArgs) Handles btnSendRequest.Click
         disableAllControls(Me)
 

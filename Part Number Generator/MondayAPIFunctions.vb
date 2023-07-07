@@ -77,6 +77,7 @@ Module MondayAPIFunctions
 
     'End of classes declaration for Monday
 
+    'Monday.com Board ID for Lasermet Parts Approval board
     Dim mondayBoardID As String = "4158815611"
 
     Public Async Function createMondayItem(part_no As String, drawing_no As String, ByVal category As String, ByVal subcategory As String, ByVal groupName As String, ByVal description As String, ByVal specs As String, ByVal comments As String, request_id As String, UKNomCode As String, UKCC As String, requestDate As String, location As String, warehouse As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
@@ -281,14 +282,35 @@ sendQuery:
 
     End Function
 
-    Public Async Function updateStatusOnMonday(monday_id As String, status As String, part_no As String, dwg_no As String, description As String, specs As String, category As String, subcategory As String, group_name As String, revCC As String, issCC As String, location As String, warehouse As String, Optional comments As String = "N/A", Optional ctrl As ToolStripStatusLabel = Nothing, Optional managerApprovalDate As String = "", Optional finalApprovalDate As String = "", Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
+    '================================================================================
+    'FUNCTION   : updateStatusOnMonday
+    'DESCRIPTION: Updates the status on the specific Monday.com board for part numbers?
+    'ARGUMENTS  : monday_id, status, part_no, dwg_no, description, specs, category, subcategory,
+    '             group_name, revCC, issCC, location, warehouse - String
+    '             comments - String with value of N/A
+    '             managerApprovalDate, finalApprovalDate, supplier, mpn, srn - String with empty default values
+    '             ctrl - ToolStripStatusLabel of nothing
+    'RETURNS    : Task - asynchronous operation that returns a data type of String
+    '================================================================================
+    Public Async Function updateStatusOnMonday(monday_id As String, status As String,
+                                               part_no As String, dwg_no As String, description As String,
+                                               specs As String, category As String, subcategory As String,
+                                               group_name As String, revCC As String, issCC As String,
+                                               location As String, warehouse As String,
+                                               Optional comments As String = "N/A",
+                                               Optional ctrl As ToolStripStatusLabel = Nothing,
+                                               Optional managerApprovalDate As String = "",
+                                               Optional finalApprovalDate As String = "",
+                                               Optional supplier As String = "",
+                                               Optional mpn As String = "",
+                                               Optional srn As String = "") As Task(Of String())
 
         Dim finalpartNo As String = part_no
 
+        'if the account type is Inventory Admin, and their status is Approved, then do the stuff
         If login.account_type = "Inventory Admin" And status = "Approved" Then
 
             'Generate final part no. to be added to database.
-
             Dim partsNums As New List(Of Integer)
             Dim categoryNo As String = part_no.Split("-")(2)
 
@@ -320,8 +342,6 @@ sendQuery:
             End Try
 
             'Check temporary database for fully approved parts with same category number
-
-
             Try
 
                 Dim sqlQuery As String = "SELECT * from ""LasermetPARTS_forApproval"" WHERE ""manager_approval"" = 'Approved' AND ""final_approval"" = 'Approved'"
@@ -602,6 +622,12 @@ sendQuery:
 
     End Function
 
+    '================================================================================
+    'FUNCTION   : SendMondayRequest
+    'DESCRIPTION: Sends a Monday.com API request.
+    'ARGUMENTS  : myQuery - String value (explicitly passed by value via ByVal declaration)
+    'RETURNS    : Task - asynchronous operation that returns a data type of Object
+    '================================================================================
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of Object)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
         options.ThrowOnAnyError = True
@@ -634,8 +660,14 @@ sendQuery:
         End If
     End Function
 
+    '================================================================================
+    'FUNCTION   : getMondayID
+    'DESCRIPTION: Retrieves the Monday.com ID of the to-be-registered user in the selected Monday.com teams list. 
+    'ARGUMENTS  : email - String
+    'RETURNS    : Task  - asynchronous operation that returns a data type of String
+    '================================================================================
     Public Async Function getMondayID(email As String) As Task(Of String)
-
+        'prepare string to use for querying to the monday.com teams list.
         Dim getUsers As String = "query{ users{ id name email }}"
         Dim monday_id As String
 
@@ -644,37 +676,34 @@ sendQuery:
         Try
 
             For retries = 1 To 30
-                If retries <> 30 Then
+                If retries <> 30 Then 'if retries != 30
+                    'get the table of the currently registered users in the Monday.com board.
                     Dim usersFromMonday As Object = Await SendMondayRequest(getUsers)
 
                     If usersFromMonday(0) = "error" Then
-
                         Return $"Error occured while connecting to Monday. Retrying ({retries}/30)"
                     Else
 
                         Dim sqlQuery As String
                         Dim responseString As String
 
+                        'the MondayUsers class contains the data and the account ID. see above declaration
                         Dim mondayUsersList As MondayUsers = JsonConvert.DeserializeObject(Of MondayUsers)(usersFromMonday(1))
 
+                        'loops the monday users list to check for the user's email
                         For Each user In mondayUsersList.data.users
-
+                            'if  the current selected email = user's email, assign the user id to the monday_id
                             If user.email = email Then
                                 monday_id = user.id
                             End If
-
                         Next
-
 
                         recons = 0
 
                         Return monday_id
-
                     End If
                 End If
             Next
-
-
 
         Catch ex As Exception
             If recons > 0 And recons < 30 Then
