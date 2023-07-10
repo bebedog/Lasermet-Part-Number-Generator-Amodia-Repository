@@ -671,7 +671,7 @@ sendQuery:
         Dim getUsers As String = "query{ users{ id name email }}"
         Dim monday_id As String
 
-        Dim recons As Integer
+        Dim recons As Integer 'reconnection count
 sendQuery:
         Try
 
@@ -691,8 +691,9 @@ sendQuery:
                         Dim mondayUsersList As MondayUsers = JsonConvert.DeserializeObject(Of MondayUsers)(usersFromMonday(1))
 
                         'loops the monday users list to check for the user's email
+                        'there is something wrong in this part
                         For Each user In mondayUsersList.data.users
-                            'if  the current selected email = user's email, assign the user id to the monday_id
+                            'if the current selected email = user's email, assign the user id to the monday_id
                             If user.email = email Then
                                 monday_id = user.id
                             End If
@@ -706,6 +707,7 @@ sendQuery:
             Next
 
         Catch ex As Exception
+            Console.WriteLine("This is the error message: " + ex.Message)
             If recons > 0 And recons < 30 Then
                 recons += 1
                 Return $"Attempting to reconnect to Monday {recons}/30"

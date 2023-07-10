@@ -33,10 +33,6 @@ Public Class RequestAccount
 
         'getMondayID function is found at the MondayAPIFunctions.vb file
         Dim monday_id As String = Await getMondayID(lasermet_email)
-        Console.WriteLine("This is the monday id: " & monday_id)
-        Dim testString As String = " - this is the concat one"
-        Console.WriteLine("This is the hardcoded text" & testString)
-        Console.ReadLine()
 
         If monday_id IsNot Nothing Or String.IsNullOrWhiteSpace(monday_id) = False Then
 
