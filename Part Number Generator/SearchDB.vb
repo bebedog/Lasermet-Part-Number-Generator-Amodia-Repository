@@ -686,7 +686,8 @@ Public Class SearchDB
         Dim partcomments As String
         Dim partRequester As String
         Dim partRequestID As Integer
-        Dim partStockCount As Integer
+        'change data type of the current stock variable here (originally Integer)
+        Dim partStockCount As String
         Dim partDrawingNo As String
         Dim partDepartment As String
         Dim monday_id As String
@@ -1127,7 +1128,7 @@ Public Class SearchDB
             populateApprovalDGV()
 
         Catch ex As Exception
-
+            Console.WriteLine("SearchDB.denyPart Exception: " & ex.Message)
             MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Console.WriteLine(ex.Message)
 
@@ -1182,6 +1183,8 @@ Public Class SearchDB
                     End If
 
                 Catch ex As Exception
+                    Console.WriteLine("SearchDB.approvePart Exception: " & ex.Message)
+                    Console.ReadLine()
                     MessageBox.Show("An error occured while approving the request", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     pcon.Close()
                 End Try

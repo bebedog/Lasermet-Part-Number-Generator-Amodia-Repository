@@ -7,7 +7,7 @@
     Dim partsubcategory_old As String
     Dim partgroupname_old As String
     Dim partcomments_old As String
-    Dim partstock_old As Integer
+    Dim partstock_old As String
     Dim projectnum_old As String
     Dim invDepartment As String
     Dim requestID As Integer
@@ -51,7 +51,8 @@
 
     End Function
 
-    Public Sub populateUpdateForm(partnum As String, partdesc As String, partspecs As String, partcategory As String, partsubcategory As String, partgroupname As String, partcomments As String, partstock As Integer, projectnum As String, department As String, request_id As Integer, requester As String, monday_id As String, revCC As String, issCC As String, location As String, warehouse As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
+    'original data type of partstock is Integer
+    Public Sub populateUpdateForm(partnum As String, partdesc As String, partspecs As String, partcategory As String, partsubcategory As String, partgroupname As String, partcomments As String, partstock As String, projectnum As String, department As String, request_id As Integer, requester As String, monday_id As String, revCC As String, issCC As String, location As String, warehouse As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
 
         partnum_old = partnum
         partdesc_old = partdesc
@@ -144,7 +145,8 @@
 
     End Sub
 
-    Private Sub updateItem(oldpartnum As String, partdesc As String, partspecs As String, partcategory As String, partsubcategory As String, partgroupname As String, partcomments As String, partstock As Integer, projectnum As String, revCC As String, issCC As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
+    'original data type of partstock is Integer
+    Private Sub updateItem(oldpartnum As String, partdesc As String, partspecs As String, partcategory As String, partsubcategory As String, partgroupname As String, partcomments As String, partstock As String, projectnum As String, revCC As String, issCC As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
 
         Call connectPostGre()
 
