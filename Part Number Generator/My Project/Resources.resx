@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="apiKey" xml:space="preserve">
-    <value>eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTg3NTczMCwidWlkIjozNjkzODg5OSwiaWFkIjoiMjAyMy0wMS0wM1QwMzoxNjoyOC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.WyM7DJEbXNeF4r6leiLcLbb9oFe57alDkwMhHWEkKrM</value>
+    <value>eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjI2Nzk1MzUwMywiYWFpIjoxMSwidWlkIjo0MDMyMzk2MiwiaWFkIjoiMjAyMy0wNy0xMVQwMzozMzo1Ni4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.CCuwX5YlwCQJ7WBQhZUJ_vXnRpRir1tezzoQfI91i60</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="BatchRequestTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">

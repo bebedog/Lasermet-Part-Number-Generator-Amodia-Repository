@@ -1136,14 +1136,38 @@ Public Class SearchDB
 
     End Sub
 
-    Public Async Sub approvePart(ByVal partNo As String, ByVal description As String, ByVal specifications As String, ByVal category As String, ByVal subcategory As String, ByVal group_name As String, ByVal comments As String, ByVal requester As String, ByVal approver As String, request_id As String, drawingno As String, department As String, monday_id As String, revCC As String, issCC As String, warehouse As String, location As String, Optional form As Form = Nothing, Optional statusbar As ToolStripStatusLabel = Nothing, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
+    Public Async Sub approvePart(ByVal partNo As String,
+                                 ByVal description As String,
+                                 ByVal specifications As String,
+                                 ByVal category As String,
+                                 ByVal subcategory As String,
+                                 ByVal group_name As String,
+                                 ByVal comments As String,
+                                 ByVal requester As String,
+                                 ByVal approver As String,
+                                 request_id As String,
+                                 drawingno As String,
+                                 department As String,
+                                 monday_id As String,
+                                 revCC As String,
+                                 issCC As String,
+                                 warehouse As String,
+                                 location As String,
+                                 Optional form As Form = Nothing,
+                                 Optional statusbar As ToolStripStatusLabel = Nothing,
+                                 Optional supplier As String = "",
+                                 Optional mpn As String = "",
+                                 Optional srn As String = "")
 
         If checkForDuplicates(description) = False Then
 
+            'error is somewhere starting here
             If statusbar IsNot Nothing Then
                 statusbar.Text = "Updating status on Monday.com...."
             End If
             ToolStripStatusLabel1.Text = "Updating status on Monday.com...."
+
+            Console.WriteLine("Passed here at statusbar If Condition")
 
             Dim mondayApproval As String()
 
@@ -1151,20 +1175,23 @@ Public Class SearchDB
 
                 Case "Inventory Admin"
 
-                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1,, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
+                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
 
                 Case Else
 
-                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),, supplier, mpn, srn)
+                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
 
             End Select
 
+            Console.WriteLine("Passed here at Select Case")
 
             If mondayApproval(0) = "success" Then
 
                 If statusbar IsNot Nothing Then
                     statusbar.Text = mondayApproval(1)
                 End If
+                Console.WriteLine("Passed here at mondayApproval If condition")
+
 
                 Try
 
@@ -1184,7 +1211,6 @@ Public Class SearchDB
 
                 Catch ex As Exception
                     Console.WriteLine("SearchDB.approvePart Exception: " & ex.Message)
-                    Console.ReadLine()
                     MessageBox.Show("An error occured while approving the request", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     pcon.Close()
                 End Try

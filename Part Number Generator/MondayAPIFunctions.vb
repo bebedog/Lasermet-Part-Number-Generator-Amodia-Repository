@@ -9,15 +9,27 @@ Module MondayAPIFunctions
 
     'Start of classes declaration for Monday
 
+    '================================================================================
+    'CLASS: PersonsAndTeam
+    'DESCRIPTION: Class that contains the Monday ID and the kind of team.
+    '================================================================================
     Public Class PersonsAndTeam
         Public Property id As Integer
         Public Property kind As String
     End Class
 
+    '================================================================================
+    'CLASS: Person
+    'DESCRIPTION: Class that instantiates the PersonsAndTeam class.
+    '================================================================================
     Public Class Person
         Public Property personsAndTeams As PersonsAndTeam()
     End Class
 
+    '================================================================================
+    'CLASS: MultipleColumnValues
+    'DESCRIPTION: Class that contains the part number details.
+    '================================================================================
     Public Class MultipleColumnValues
         Public Property text8 As String 'Lasermet Drawing No.
         Public Property text1 As String 'Description
@@ -338,7 +350,7 @@ sendQuery:
 
             Catch ex As Exception
                 MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Console.WriteLine(ex.Message)
+                Console.WriteLine("updateStatusOnMonday 1st Try-Catch exception: " & ex.Message)
             End Try
 
             'Check temporary database for fully approved parts with same category number
@@ -364,7 +376,7 @@ sendQuery:
 
             Catch ex As Exception
                 MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Console.WriteLine(ex.Message)
+                Console.WriteLine("updateStatusOnMonday 2nd Try-Catch exception:" & ex.Message)
             End Try
 
             Dim seriesNo As String = ""
@@ -434,6 +446,7 @@ sendQuery:
 
         Dim changeColumnsOnMonday As String
 
+        'query format is working as of 230711
         Select Case status
             Case "Approved"
                 Select Case login.account_type
@@ -470,7 +483,10 @@ sendQuery:
 
             For retries = 1 To 30
                 If retries <> 30 Then
+                    'problem is most likely at the SendMondayRequest function
                     Dim mondayResponse As Object = Await SendMondayRequest(changeColumnsOnMonday)
+
+                    'Console.WriteLine("Passed here at updateStatusOnMonday: after SendMondayRequest await function")
 
 
                     If mondayResponse(0) = "error" Then
@@ -593,6 +609,7 @@ sendQuery:
                         Catch ex As Exception
 
                             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            Console.WriteLine("updateStatusOnMonday 3rd Try-Catch exception:" & ex.Message)
                             pcon.Close()
 
                         End Try
@@ -611,6 +628,7 @@ sendQuery:
                 GoTo sendQuery
             ElseIf recons >= 30 Then
                 MessageBox.Show("Failed to connect to Monday. Press OK to restart", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Console.WriteLine("updateStatusOnMonday 4th Try-Catch exception:" & ex.Message)
                 If DialogResult.OK Then
                     Application.Restart()
                 End If
@@ -639,12 +657,23 @@ sendQuery:
         request.AddHeader("Authorization", apiKey)
         request.AddQueryParameter("query", myQuery)
         Dim response = New RestResponse
-        response = Await client.PostAsync(request)
+
         'If response.IsSuccessStatusCode = True Then
         '    Return response.Content
         'Else
         '    Return False
         'End If
+
+        Try
+            'if the next line will throw an exception code of "Unauthorized",
+            'try changing the API key via the My Project -> Resources tab in the Solution Explorer.
+            response = Await client.PostAsync(request)
+        Catch ex As Exception
+            'Console.WriteLine("This is the exception for the client.PostAsync function: " & ex.Message)
+            MessageBox.Show("An error has occured while updating the Lasermet Parts Approval Board at Monday.com.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            pcon.Close()
+        End Try
+
         If response.IsSuccessStatusCode Then
             'response has a statuscode of 200
             'but it might have a parse error, which still is status 200.
@@ -671,17 +700,19 @@ sendQuery:
         Dim getUsers As String = "query{ users{ id name email }}"
         Dim monday_id As String
 
-        Dim recons As Integer 'reconnection count
+        'reconnection count
+        Dim recons As Integer
 sendQuery:
         Try
 
             For retries = 1 To 30
                 If retries <> 30 Then 'if retries != 30
                     'get the table of the currently registered users in the Monday.com board.
+                    'if this function does not return anything, check the API key validity
                     Dim usersFromMonday As Object = Await SendMondayRequest(getUsers)
 
                     If usersFromMonday(0) = "error" Then
-                        Return $"Error occured while connecting to Monday. Retrying ({retries}/30)"
+                        Return $"Error occured while connecting to Monday.com. Retrying ({retries}/30)"
                     Else
 
                         Dim sqlQuery As String
