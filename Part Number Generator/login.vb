@@ -52,7 +52,7 @@ Public Class login
     '================================================================================
     'CLASS       : ReleaseEntry
     'DESCRIPTION : Class that has the variables be declared as string. This class
-    '              holds the details of (something).
+    '              holds the details of the Release Entry.
     '================================================================================
     Public Class ReleaseEntry
         Public Property SHA1 As String
