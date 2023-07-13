@@ -1,10 +1,31 @@
-﻿Imports System.IO
+﻿'================================================================================
+'FILE        : BatchPartRequest.vb
+'AUTHORS     : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file shows the processes and design menu of the Batch Part Request menu of the Part Number Generator.
+'COPYRIGHT   : 13 July 2023
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/13     Sigaya      Documentation
+'================================================================================
+
+Imports System.IO
 Imports System.Data.SqlClient
 
+
+'================================================================================
+'CLASS       : BatchPartRequest
+'DESCRIPTION : Class that stores variables, functions, and other classes for the Batch Part Request menu
+'================================================================================
 Public Class BatchPartRequest
 
     Dim batchRequestTable As New DataTable
 
+    '================================================================================
+    'SUBROUTINE   : btnImportFile_Click
+    'DESCRIPTION  : Loads the Import file window.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnImportFile_Click(sender As Object, e As EventArgs) Handles btnImportFile.Click
         OpenFileDialog1.ShowDialog()
 
@@ -15,6 +36,11 @@ Public Class BatchPartRequest
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : ExceltoDGV
+    'DESCRIPTION  : Imports template data in Excel format to the DataGridView section.
+    'ARGUMENTS    : filename - String
+    '================================================================================
     Private Sub ExceltoDGV(filename As String)
 
         Try
@@ -75,12 +101,13 @@ Public Class BatchPartRequest
             MessageBox.Show($"Error encountered while uploading file. {Environment.NewLine} {ex.Message}", "Exception caught during file upload", MessageBoxButtons.OK, MessageBoxIcon.Error)
 
         End Try
-
-
-
-
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : CSVtoDGV
+    'DESCRIPTION  : Imports template data in csv format to the DataGridView section.
+    'ARGUMENTS    : filename - String
+    '================================================================================
     Private Sub CSVtoDGV(filename As String)
 
         Try
@@ -178,6 +205,11 @@ Public Class BatchPartRequest
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : disableControls
+    'DESCRIPTION  : Disables all controls in the current window.
+    'ARGUMENTS    : None
+    '================================================================================
     Private Sub disableControls()
 
         For Each c As Control In Me.Controls
@@ -186,6 +218,11 @@ Public Class BatchPartRequest
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : enableControls
+    'DESCRIPTION  : Enables all controls in the current window.
+    'ARGUMENTS    : None
+    '================================================================================
     Private Sub enableControls()
 
         For Each c As Control In Me.Controls
@@ -194,6 +231,11 @@ Public Class BatchPartRequest
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : sendBatchRequest
+    'DESCRIPTION  : Pushes the batch request to the database.
+    'ARGUMENTS    : None
+    '================================================================================
     Private Async Sub sendBatchRequest()
 
         Call connectPostGre()
@@ -339,6 +381,12 @@ Public Class BatchPartRequest
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : btnBack_Click
+    'DESCRIPTION  : Returns to the dashboard that is based on the user account type.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Select Case login.account_type
             Case "App Admin"
@@ -360,18 +408,33 @@ Public Class BatchPartRequest
         End Select
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : btnSendRequest_Click
+    'DESCRIPTION  : Executes the sendBatchRequest subroutine.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnSendRequest_Click(sender As Object, e As EventArgs) Handles btnSendRequest.Click
         sendBatchRequest()
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : BatchPartRequest_Load
+    'DESCRIPTION  : Disables the Send Request option while the menu is loading.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub BatchPartRequest_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         btnSendRequest.Enabled = False
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : btnGetTemplate_Click
+    'DESCRIPTION  : Outputs the template for the batch request.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnGetTemplate_Click(sender As Object, e As EventArgs) Handles btnGetTemplate.Click
-
-
-
         dlgSaveTemplate.Filter = "Excel (*.xls)|*.xls"
         dlgSaveTemplate.FilterIndex = 2
         dlgSaveTemplate.RestoreDirectory = True
@@ -379,6 +442,5 @@ Public Class BatchPartRequest
             IO.File.WriteAllBytes(dlgSaveTemplate.FileName, My.Resources.BatchRequestTemplate)
             Process.Start(dlgSaveTemplate.FileName)
         End If
-
     End Sub
 End Class
