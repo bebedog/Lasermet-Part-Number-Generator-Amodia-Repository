@@ -7,6 +7,8 @@ Module MondayAPIFunctions
     Private apiKey As String = My.Resources.apiKey
     Dim queryTimeOut As Integer = 10000
 
+    Private createItemQuery As String
+
     'Start of classes declaration for Monday
 
     '================================================================================
@@ -129,7 +131,7 @@ Module MondayAPIFunctions
                                            Optional supplier As String = "", Optional mpn As String = "",
                                            Optional srn As String = "") As Task(Of String())
 
-        Dim createItemQuery As String
+
 
         Select Case location
             Case "United Kingdom"

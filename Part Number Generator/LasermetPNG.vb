@@ -417,7 +417,6 @@ Public Class LasermetPNG
         requiredInputs.Add(tbDescription)
 
         For Each c As Control In requiredInputs
-
             If String.IsNullOrWhiteSpace(c.Text) Then
                 emptyfields += 1
             ElseIf TypeOf c Is ComboBox Then

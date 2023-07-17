@@ -34,8 +34,8 @@
     End Sub
 
     Private Sub btnLogout_Click(sender As Object, e As EventArgs)
-        Me.Close()
         login.Show()
+        Me.Close()
     End Sub
 
     Private Sub btnExit_Click(sender As Object, e As EventArgs) Handles btnExit.Click
@@ -44,7 +44,7 @@
 
     Private Sub btnViewRequests_Click(sender As Object, e As EventArgs) Handles btnViewRequests.Click
         SearchDB.populateRequestStatus()
-        Me.Close()
         SearchDB.Show()
+        Me.Close()
     End Sub
 End Class

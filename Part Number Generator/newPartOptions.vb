@@ -21,8 +21,8 @@ Public Class newPartOptions
     '               e      - EventArgs
     '================================================================================
     Private Sub btnSingleRequest_Click(sender As Object, e As EventArgs) Handles btnSingleRequest.Click
-        Me.Close()
         LasermetPNG.Show()
+        Me.Close()
     End Sub
 
     '================================================================================
