@@ -61,7 +61,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Looks up a localized string similar to eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjIxNTg3NTczMCwidWlkIjozNjkzODg5OSwiaWFkIjoiMjAyMy0wMS0wM1QwMzoxNjoyOC4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.WyM7DJEbXNeF4r6leiLcLbb9oFe57alDkwMhHWEkKrM.
+        '''  Looks up a localized string similar to eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjI2Nzk1MzUwMywiYWFpIjoxMSwidWlkIjo0MDMyMzk2MiwiaWFkIjoiMjAyMy0wNy0xMVQwMzozMzo1Ni4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6NjYxMjMxMCwicmduIjoidXNlMSJ9.CCuwX5YlwCQJ7WBQhZUJ_vXnRpRir1tezzoQfI91i60.
         '''</summary>
         Friend ReadOnly Property apiKey() As String
             Get

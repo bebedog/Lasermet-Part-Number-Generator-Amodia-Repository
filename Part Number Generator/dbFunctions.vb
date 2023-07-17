@@ -1,7 +1,20 @@
-﻿Imports System.Data.OleDb
+﻿'================================================================================
+'FILE        : dbFunctions.vb
+'AUTHORS     : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file contains the database functions of the program.
+'COPYRIGHT   : 13 July 2023
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/13     Sigaya      Documentation
+'================================================================================
+
+Imports System.Data.OleDb
 Imports System.Data.Odbc
 
-
+'================================================================================
+'CLASS       : dbFunctions
+'DESCRIPTION : Module that contains database-related functions.
+'================================================================================
 Module dbFunctions
 
     Public dbProvider As String
