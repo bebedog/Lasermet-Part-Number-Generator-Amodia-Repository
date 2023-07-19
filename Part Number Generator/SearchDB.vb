@@ -1,6 +1,20 @@
-﻿Imports System.Text
+﻿'================================================================================
+'FILE        : SearchDB.vb
+'AUTHORS     : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file shows the processes and design menus of the four options found in the dashboard of the Part Number Generator.
+'COPYRIGHT   : 13 July 2023
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/13     Sigaya      Documentation
+'================================================================================
+
+Imports System.Text
 Imports System.Threading
 
+'================================================================================
+'CLASS       : SearchDB
+'DESCRIPTION : Class that stores variables, functions, and other classes for the SearchDB file
+'=============================================================================
 Public Class SearchDB
 
     Public resultsTable As New DataTable()
@@ -9,7 +23,11 @@ Public Class SearchDB
     Public accountRequestsTable As New DataTable()
     Dim csvSavepath As String = ""
 
-
+    '================================================================================
+    'SUBROUTINE   : populateAccountRequestsDGV
+    'DESCRIPTION  : Populates the Account Requests DataGridView.
+    'ARGUMENTS    : None
+    '================================================================================
     Public Sub populateAccountRequestsDGV()
 
         panelMasterListOptions.Hide()
@@ -153,6 +171,11 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : populateInventoryDGV
+    'DESCRIPTION  : Populates the Inventory DataGridView.
+    'ARGUMENTS    : None
+    '================================================================================
     Public Sub populateInventoryDGV()
 
         panelMasterListOptions.Show()
@@ -429,9 +452,6 @@ Public Class SearchDB
 
             End If
 
-
-
-
         Catch ex As Exception
 
             MessageBox.Show($"Exception thrown at SearchDB.populateInventoryDGV:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -441,6 +461,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'FUNCTION     : populateApprovalDGV
+    'DESCRIPTION  : Populates the pending Part Requests DataGridView.
+    'ARGUMENTS    : None
+    'RETURNS      : DataTable - stores data in memory, essential in SQL 
+    '================================================================================
     Public Function populateApprovalDGV() As DataTable
 
         panelMasterListOptions.Hide()
@@ -466,6 +492,7 @@ Public Class SearchDB
 
             Dim sqlQuery As String
 
+            'no case for general user
             Select Case login.account_type
                 Case "Dept. Manager"
                     sqlQuery = $"SELECT * FROM ""LasermetPARTS_forApproval"" WHERE ""department"" = '{login.user_department}' AND ""manager_approval"" IS NULL OR ""manager_approval"" = 'Needs additional information' AND ""final_approval"" IS NULL AND ""requested_by"" IN (SELECT ""username"" FROM ""users"" WHERE ""user_type"" = 'General User' OR ""user_type"" = 'App Admin')"
@@ -637,6 +664,12 @@ Public Class SearchDB
 
     End Function
 
+    '================================================================================
+    'SUBROUTINE   : tbSearchKeyword_TextChanged
+    'DESCRIPTION  : Changes the current search text.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub tbSearchKeyword_TextChanged(sender As Object, e As EventArgs) Handles tbSearchKeyword.TextChanged
 
         Dim dt As DataTable = dgvSearchResults.DataSource
@@ -646,7 +679,12 @@ Public Class SearchDB
 
     End Sub
 
-
+    '================================================================================
+    'SUBROUTINE   : btnBack_Click
+    'DESCRIPTION  : Returns to the dashboard based on the type of user account.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Select Case login.account_type
             Case "App Admin"
@@ -671,6 +709,13 @@ Public Class SearchDB
         End Select
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : dgvSearchResults_CellContentClick
+    'DESCRIPTION  : Display DataGridView results based on the dashboard option clicked.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
+    'note: much better if the option-specific windows are divided into their own separate modules
     Private Sub dgvSearchResults_CellContentClick(sender As Object, e As DataGridViewCellEventArgs) Handles dgvSearchResults.CellContentClick
 
         Dim sendergrid = DirectCast(sender, DataGridView)
@@ -686,7 +731,8 @@ Public Class SearchDB
         Dim partcomments As String
         Dim partRequester As String
         Dim partRequestID As Integer
-        Dim partStockCount As Integer
+        'change data type of the current stock variable here (originally Integer)
+        Dim partStockCount As String
         Dim partDrawingNo As String
         Dim partDepartment As String
         Dim monday_id As String
@@ -969,6 +1015,11 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : denyUserRequest
+    'DESCRIPTION  : Denies the user account request.
+    'ARGUMENTS    : username, password, email, first_name, surname - String
+    '================================================================================
     Private Sub denyUserRequest(username As String, password As String, email As String, first_name As String, surname As String)
 
         Call connectPostGre()
@@ -1000,7 +1051,15 @@ Public Class SearchDB
 
     End Sub
 
-    Private Sub approveUser(username As String, password As String, email As String, user_type As String, first_name As String, surname As String, location As String, department As String, monday_id As String)
+    '================================================================================
+    'SUBROUTINE   : approveUser
+    'DESCRIPTION  : Approves the user account request.
+    'ARGUMENTS    : username, password, email, user_type, first_name, surname, location, department, monday_id - String
+    '================================================================================
+    Private Sub approveUser(username As String, password As String,
+                            email As String, user_type As String,
+                            first_name As String, surname As String,
+                            location As String, department As String, monday_id As String)
 
         Call connectPostGre()
 
@@ -1081,7 +1140,25 @@ Public Class SearchDB
 
     End Sub
 
-    Public Async Sub denyPart(ByVal partNo As String, ByVal request_id As String, requester As String, monday_id As String, dwg_no As String, description As String, specs As String, category As String, subcategory As String, group_name As String, revCC As String, issCC As String, location As String, warehouse As String, supplier As String, mpn As String, srn As String, Optional comments As String = "Part request denied", Optional form As Form = Nothing, Optional statusbar As ToolStripStatusLabel = Nothing)
+    '================================================================================
+    'SUBROUTINE   : denyPart
+    'DESCRIPTION  : Denies the part number request.
+    'ARGUMENTS    : partNo, request_id, requester, monday_id, dwg_no, description,
+    '               specs, category, subcategory, group_name, revCC, issCC, location,
+    '               warehouse, supplier, mpn, srn, comments - String
+    '               form      - Form
+    '               statusbar - ToolStripStatusLabel
+    '================================================================================
+    Public Async Sub denyPart(ByVal partNo As String, ByVal request_id As String,
+                              requester As String, monday_id As String,
+                              dwg_no As String, description As String,
+                              specs As String, category As String,
+                              subcategory As String, group_name As String,
+                              revCC As String, issCC As String,
+                              location As String, warehouse As String,
+                              supplier As String, mpn As String,
+                              srn As String, Optional comments As String = "Part request denied",
+                              Optional form As Form = Nothing, Optional statusbar As ToolStripStatusLabel = Nothing)
 
         Try
 
@@ -1127,7 +1204,7 @@ Public Class SearchDB
             populateApprovalDGV()
 
         Catch ex As Exception
-
+            Console.WriteLine("SearchDB.denyPart Exception: " & ex.Message)
             MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Console.WriteLine(ex.Message)
 
@@ -1135,14 +1212,47 @@ Public Class SearchDB
 
     End Sub
 
-    Public Async Sub approvePart(ByVal partNo As String, ByVal description As String, ByVal specifications As String, ByVal category As String, ByVal subcategory As String, ByVal group_name As String, ByVal comments As String, ByVal requester As String, ByVal approver As String, request_id As String, drawingno As String, department As String, monday_id As String, revCC As String, issCC As String, warehouse As String, location As String, Optional form As Form = Nothing, Optional statusbar As ToolStripStatusLabel = Nothing, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "")
+    '================================================================================
+    'SUBROUTINE   : approvePart
+    'DESCRIPTION  : Approves the part number request.
+    'ARGUMENTS    : partNo, description, specifications, category, subcategory, group_name,
+    '               comments, requester, approver, request_id, drawingno, department, monday_id,
+    '               revCC, issCC, warehouse, location, supplier, mpn, srn - String
+    '               form      - Form
+    '               statusbar - ToolStripStatusLabel
+    '================================================================================
+    Public Async Sub approvePart(ByVal partNo As String,
+                                 ByVal description As String,
+                                 ByVal specifications As String,
+                                 ByVal category As String,
+                                 ByVal subcategory As String,
+                                 ByVal group_name As String,
+                                 ByVal comments As String,
+                                 ByVal requester As String,
+                                 ByVal approver As String,
+                                 request_id As String,
+                                 drawingno As String,
+                                 department As String,
+                                 monday_id As String,
+                                 revCC As String,
+                                 issCC As String,
+                                 warehouse As String,
+                                 location As String,
+                                 Optional form As Form = Nothing,
+                                 Optional statusbar As ToolStripStatusLabel = Nothing,
+                                 Optional supplier As String = "",
+                                 Optional mpn As String = "",
+                                 Optional srn As String = "")
 
         If checkForDuplicates(description) = False Then
 
+            'error is somewhere starting here
             If statusbar IsNot Nothing Then
                 statusbar.Text = "Updating status on Monday.com...."
             End If
             ToolStripStatusLabel1.Text = "Updating status on Monday.com...."
+
+            Console.WriteLine("Passed here at statusbar If Condition")
 
             Dim mondayApproval As String()
 
@@ -1150,20 +1260,23 @@ Public Class SearchDB
 
                 Case "Inventory Admin"
 
-                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1,, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
+                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
 
                 Case Else
 
-                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),, supplier, mpn, srn)
+                    mondayApproval = Await updateStatusOnMonday(monday_id, "Approved", partNo, drawingno, description, specifications, category, subcategory, group_name, revCC, issCC, location, warehouse, comments, ToolStripStatusLabel1, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), supplier, mpn, srn)
 
             End Select
 
+            Console.WriteLine("Passed here at Select Case")
 
             If mondayApproval(0) = "success" Then
 
                 If statusbar IsNot Nothing Then
                     statusbar.Text = mondayApproval(1)
                 End If
+                Console.WriteLine("Passed here at mondayApproval If condition")
+
 
                 Try
 
@@ -1182,6 +1295,7 @@ Public Class SearchDB
                     End If
 
                 Catch ex As Exception
+                    Console.WriteLine("SearchDB.approvePart Exception: " & ex.Message)
                     MessageBox.Show("An error occured while approving the request", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                     pcon.Close()
                 End Try
@@ -1214,6 +1328,11 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : populateRequestStatus
+    'DESCRIPTION  : Populates the Request Status / Inventory requests.
+    'ARGUMENTS    : None
+    '================================================================================
     Public Sub populateRequestStatus()
 
         panelSearchFilters.Visible = False
@@ -1364,6 +1483,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbCategory_CheckedChanged
+    'DESCRIPTION  : Changes the text for the category filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbCategory_CheckedChanged(sender As Object, e As EventArgs) Handles chbCategory.CheckedChanged
 
         If chbCategory.Checked = True Then
@@ -1377,6 +1502,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbSubcategory_CheckedChanged
+    'DESCRIPTION  : Changes the text for the subcategory filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbSubcategory_CheckedChanged(sender As Object, e As EventArgs) Handles chbSubcategory.CheckedChanged
 
         If chbSubcategory.Checked = True Then
@@ -1390,6 +1521,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbGroupName_CheckedChanged
+    'DESCRIPTION  : Changes the text for the group name filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbGroupName_CheckedChanged(sender As Object, e As EventArgs) Handles chbGroupName.CheckedChanged
 
         If chbGroupName.Checked = True Then
@@ -1403,6 +1540,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbDescription_CheckedChanged
+    'DESCRIPTION  : Changes the text for the description filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbDescription_CheckedChanged(sender As Object, e As EventArgs) Handles chbDescription.CheckedChanged
 
         If chbDescription.Checked = True Then
@@ -1416,6 +1559,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbSpecs_CheckedChanged
+    'DESCRIPTION  : Changes the text for the specification filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbSpecs_CheckedChanged(sender As Object, e As EventArgs) Handles chbSpecs.CheckedChanged
 
         If chbSpecs.Checked = True Then
@@ -1429,6 +1578,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbPartNo_CheckedChanged
+    'DESCRIPTION  : Changes the text for the part number filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub chbPartNo_CheckedChanged(sender As Object, e As EventArgs) Handles chbPartNo.CheckedChanged
 
         If chbPartNo.Checked = True Then
@@ -1442,6 +1597,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbFilterByMFGorDWG_CheckedChanged
+    'DESCRIPTION  : Changes the text for the manufacturing and drawing number filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub chbFilterByMFGorDWG_CheckedChanged(sender As Object, e As EventArgs) Handles chbFilterByMFGorDWG.CheckedChanged
 
         If chbFilterByMFGorDWG.Checked = True Then
@@ -1455,6 +1616,12 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : chbFilterByDept_CheckedChanged
+    'DESCRIPTION  : Changes the text for the Department filters.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub chbFilterByDept_CheckedChanged(sender As Object, e As EventArgs) Handles chbFilterByDept.CheckedChanged
 
         If chbFilterByDept.Checked = True Then
@@ -1468,6 +1635,11 @@ Public Class SearchDB
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : filterDB
+    'DESCRIPTION  : Filters the database based on the filter selected.
+    'ARGUMENTS    : None
+    '===============================================================================
     Private Sub filterDB()
         Dim sb As StringBuilder = New StringBuilder()
         Dim activeFilters As New List(Of String)
@@ -1538,60 +1710,120 @@ Public Class SearchDB
         dgvSearchResults.Refresh()
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbCategoryFilter_TextChanged
+    'DESCRIPTION  : Filters the database based on the category.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbCategoryFilter_TextChanged(sender As Object, e As EventArgs) Handles tbCategoryFilter.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbSubcategoryFilter_TextChanged
+    'DESCRIPTION  : Filters the database based on the subcategory.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbSubcategoryFilter_TextChanged(sender As Object, e As EventArgs) Handles tbSubcategoryFilter.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterbyGroupName_TextChanged
+    'DESCRIPTION  : Filters the database based on the group name.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterbyGroupName_TextChanged(sender As Object, e As EventArgs) Handles tbFilterbyGroupName.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterbyDescription_TextChanged
+    'DESCRIPTION  : Filters the database based on the description.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterbyDescription_TextChanged(sender As Object, e As EventArgs) Handles tbFilterbyDescription.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterbySpecs_TextChanged
+    'DESCRIPTION  : Filters the database based on the specifications.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterbySpecs_TextChanged(sender As Object, e As EventArgs) Handles tbFilterbySpecs.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterByPartNo_TextChanged
+    'DESCRIPTION  : Filters the database based on the part numbers.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterByPartNo_TextChanged(sender As Object, e As EventArgs) Handles tbFilterByPartNo.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterByMfgOrDwg_TextChanged
+    'DESCRIPTION  : Filters the database based on the manufacturing or drawing number.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterByMfgOrDwg_TextChanged(sender As Object, e As EventArgs) Handles tbFilterByMfgOrDwg.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbFilterbyDept_TextChanged
+    'DESCRIPTION  : Filters the database based on the department.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbFilterbyDept_TextChanged(sender As Object, e As EventArgs) Handles tbFilterbyDept.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : tbSearchAll_TextChanged
+    'DESCRIPTION  : Filters the database by full.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub tbSearchAll_TextChanged(sender As Object, e As EventArgs) Handles tbSearchAll.TextChanged
 
         filterDB()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : SearchDB_Load
+    'DESCRIPTION  : Loads the SearchDB window.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub SearchDB_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.StartPosition = StartPosition.CenterScreen
         Me.Size = New Size(800, 600)
@@ -1601,13 +1833,14 @@ Public Class SearchDB
             dgvSearchResults.Columns(i).DefaultCellStyle.WrapMode = DataGridViewTriState.True
 
         Next
-
-
-
-
-
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : btnBack2_Click
+    'DESCRIPTION  : Loads the dashboard based on the user account.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub btnBack2_Click(sender As Object, e As EventArgs) Handles btnBack2.Click
 
         Select Case login.account_type
@@ -1634,12 +1867,23 @@ Public Class SearchDB
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : btnExport_Click
+    'DESCRIPTION  : Selects the file directory to save the csv file during importing.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '===============================================================================
     Private Sub btnExport_Click(sender As Object, e As EventArgs) Handles btnExport.Click
 
         selectDirectory()
 
     End Sub
 
+    '===============================================================================
+    'SUBROUTINE   : selectDirectory
+    'DESCRIPTION  : Selects the file directory to save the csv file during importing.
+    'ARGUMENTS    : None
+    '===============================================================================
     Private Sub selectDirectory()
         Dim selectFolder As DialogResult = FolderBrowserDialog1.ShowDialog()
         FolderBrowserDialog1.Description = "Select where you want to save your CSV file."
@@ -1668,7 +1912,17 @@ Public Class SearchDB
 
     End Sub
 
-    Private Function dtTableToCSV(dt As DataTable, filename As String, Optional headers As Boolean = True, Optional delim As String = ",")
+    '===============================================================================
+    'SUBROUTINE   : dtTableToCSV
+    'DESCRIPTION  : Imports the directory table to CSV file.
+    'ARGUMENTS    : dt       - Datatable
+    '               filename - String
+    '               headers  - Boolean, optional
+    '               delim    - String
+    '===============================================================================
+    Private Function dtTableToCSV(dt As DataTable, filename As String,
+                                  Optional headers As Boolean = True,
+                                  Optional delim As String = ",")
         Try
             btnExport.Enabled = False
             Dim txt As String
@@ -1753,5 +2007,4 @@ Public Class SearchDB
             End If
         End Try
     End Function
-
 End Class

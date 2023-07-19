@@ -11,15 +11,27 @@ Module MondayAPIFunctions
 
     'Start of classes declaration for Monday
 
+    '================================================================================
+    'CLASS: PersonsAndTeam
+    'DESCRIPTION: Class that contains the Monday ID and the kind of team.
+    '================================================================================
     Public Class PersonsAndTeam
         Public Property id As Integer
         Public Property kind As String
     End Class
 
+    '================================================================================
+    'CLASS: Person
+    'DESCRIPTION: Class that instantiates the PersonsAndTeam class.
+    '================================================================================
     Public Class Person
         Public Property personsAndTeams As PersonsAndTeam()
     End Class
 
+    '================================================================================
+    'CLASS: MultipleColumnValues
+    'DESCRIPTION: Class that contains the part number details.
+    '================================================================================
     Public Class MultipleColumnValues
         Public Property text8 As String 'Lasermet Drawing No.
         Public Property text1 As String 'Description
@@ -52,26 +64,46 @@ Module MondayAPIFunctions
 
     End Class
 
+    '================================================================================
+    'CLASS: CreateItem
+    'DESCRIPTION: Class that contains the Monday.com ID of the user.
+    '================================================================================
     Public Class CreateItem
         Public Property id As String
     End Class
 
+    '================================================================================
+    'CLASS: Data
+    'DESCRIPTION: Class that instantiates create_item and users.
+    '================================================================================
     Public Class Data
         Public Property create_item As CreateItem
         Public Property users As User()
     End Class
 
+    '================================================================================
+    'CLASS: CreateItemOnMonday
+    'DESCRIPTION: Class that contains the data and the account_id.
+    '================================================================================
     Public Class CreateItemOnMonday
         Public Property data As Data
         Public Property account_id As Integer
     End Class
 
+    '================================================================================
+    'CLASS: User
+    'DESCRIPTION: Class that contains the Monday.com ID, name, and email in the Lasermet Monday.com team.
+    '================================================================================
     Public Class User
         Public Property id As Integer
         Public Property name As String
         Public Property email As String
     End Class
 
+    '================================================================================
+    'CLASS: MondayUsers
+    'DESCRIPTION: Class that contains the data and the account_id.
+    '================================================================================
     Public Class MondayUsers
         Public Property data As Data
         Public Property account_id As Integer
@@ -79,9 +111,25 @@ Module MondayAPIFunctions
 
     'End of classes declaration for Monday
 
+    'Monday.com Board ID for Lasermet Parts Approval board
     Dim mondayBoardID As String = "4158815611"
 
-    Public Async Function createMondayItem(part_no As String, drawing_no As String, ByVal category As String, ByVal subcategory As String, ByVal groupName As String, ByVal description As String, ByVal specs As String, ByVal comments As String, request_id As String, UKNomCode As String, UKCC As String, requestDate As String, location As String, warehouse As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
+    '================================================================================
+    'FUNCTION   : createMondayItem
+    'DESCRIPTION: Creates the part number item to be posted on the "Lasermet Parts Approval" Monday.com board
+    'ARGUMENTS  : part_no, drawing_no, category, subcategory, groupName, description, specs, comments, request_id,
+    '             UKNomCode, UKCC, requestDate, location, warehouse, supplier, mpn, srn - String
+    'RETURNS    : Task - asynchronous operation that returns a data type of String
+    '================================================================================
+    Public Async Function createMondayItem(part_no As String, drawing_no As String,
+                                           ByVal category As String, ByVal subcategory As String,
+                                           ByVal groupName As String, ByVal description As String,
+                                           ByVal specs As String, ByVal comments As String,
+                                           request_id As String, UKNomCode As String,
+                                           UKCC As String, requestDate As String,
+                                           location As String, warehouse As String,
+                                           Optional supplier As String = "", Optional mpn As String = "",
+                                           Optional srn As String = "") As Task(Of String())
 
 
 
@@ -140,7 +188,22 @@ createNewItem:
 
     End Function
 
-    Public Async Function updateMondayColumns(item_id As String, part_no As String, drawing_no As String, ByVal category As String, ByVal subcategory As String, ByVal groupName As String, ByVal description As String, ByVal specs As String, ByVal comments As String, monday_id As String, UKNomCode As String, UKCC As String, requestDate As String, location As String, warehouse As String, Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
+    '================================================================================
+    'FUNCTION   : updateMondayColumns
+    'DESCRIPTION: Updates the part number to be posted on the "Lasermet Parts Approval" Monday.com board
+    'ARGUMENTS  : item_id, part_no, drawing_no, category, subcategory, groupName, description, specs, comments, request_id,
+    '             UKNomCode, UKCC, requestDate, location, warehouse, supplier, mpn, srn - String
+    'RETURNS    : Task - asynchronous operation that returns a data type of String
+    '================================================================================
+    Public Async Function updateMondayColumns(item_id As String, part_no As String,
+                                              drawing_no As String, ByVal category As String,
+                                              ByVal subcategory As String, ByVal groupName As String,
+                                              ByVal description As String, ByVal specs As String,
+                                              ByVal comments As String, monday_id As String,
+                                              UKNomCode As String, UKCC As String,
+                                              requestDate As String, location As String,
+                                              warehouse As String, Optional supplier As String = "",
+                                              Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
 
 
         Dim changeColumnsQuery As New MultipleColumnValues()
@@ -283,14 +346,35 @@ sendQuery:
 
     End Function
 
-    Public Async Function updateStatusOnMonday(monday_id As String, status As String, part_no As String, dwg_no As String, description As String, specs As String, category As String, subcategory As String, group_name As String, revCC As String, issCC As String, location As String, warehouse As String, Optional comments As String = "N/A", Optional ctrl As ToolStripStatusLabel = Nothing, Optional managerApprovalDate As String = "", Optional finalApprovalDate As String = "", Optional supplier As String = "", Optional mpn As String = "", Optional srn As String = "") As Task(Of String())
+    '================================================================================
+    'FUNCTION   : updateStatusOnMonday
+    'DESCRIPTION: Updates the status on the "Lasermet Parts Approval" Monday.com board for part numbers
+    'ARGUMENTS  : monday_id, status, part_no, dwg_no, description, specs, category, subcategory,
+    '             group_name, revCC, issCC, location, warehouse - String
+    '             comments - String with value of N/A
+    '             managerApprovalDate, finalApprovalDate, supplier, mpn, srn - String with empty default values
+    '             ctrl - ToolStripStatusLabel of nothing
+    'RETURNS    : Task - asynchronous operation that returns a data type of String
+    '================================================================================
+    Public Async Function updateStatusOnMonday(monday_id As String, status As String,
+                                               part_no As String, dwg_no As String, description As String,
+                                               specs As String, category As String, subcategory As String,
+                                               group_name As String, revCC As String, issCC As String,
+                                               location As String, warehouse As String,
+                                               Optional comments As String = "N/A",
+                                               Optional ctrl As ToolStripStatusLabel = Nothing,
+                                               Optional managerApprovalDate As String = "",
+                                               Optional finalApprovalDate As String = "",
+                                               Optional supplier As String = "",
+                                               Optional mpn As String = "",
+                                               Optional srn As String = "") As Task(Of String())
 
         Dim finalpartNo As String = part_no
 
+        'if the account type is Inventory Admin, and their status is Approved, then do the stuff
         If login.account_type = "Inventory Admin" And status = "Approved" Then
 
             'Generate final part no. to be added to database.
-
             Dim partsNums As New List(Of Integer)
             Dim categoryNo As String = part_no.Split("-")(2)
 
@@ -318,12 +402,10 @@ sendQuery:
 
             Catch ex As Exception
                 MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Console.WriteLine(ex.Message)
+                Console.WriteLine("updateStatusOnMonday 1st Try-Catch exception: " & ex.Message)
             End Try
 
             'Check temporary database for fully approved parts with same category number
-
-
             Try
 
                 Dim sqlQuery As String = "SELECT * from ""LasermetPARTS_forApproval"" WHERE ""manager_approval"" = 'Approved' AND ""final_approval"" = 'Approved'"
@@ -346,7 +428,7 @@ sendQuery:
 
             Catch ex As Exception
                 MessageBox.Show("Exception caught. See console", ":(", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                Console.WriteLine(ex.Message)
+                Console.WriteLine("updateStatusOnMonday 2nd Try-Catch exception:" & ex.Message)
             End Try
 
             Dim seriesNo As String = ""
@@ -416,6 +498,7 @@ sendQuery:
 
         Dim changeColumnsOnMonday As String
 
+        'query format is working as of 230711
         Select Case status
             Case "Approved"
                 Select Case login.account_type
@@ -456,10 +539,8 @@ sendQuery:
 
 
                     If mondayResponse(0) = "error" Then
-
                         responseString = {"error", $"Error occured while connecting to Monday. Retrying ({retries}/30)"}
                         ctrl.Text = responseString(1)
-
                     Else
 
                         Dim sqlQuery As String
@@ -575,6 +656,7 @@ sendQuery:
                         Catch ex As Exception
 
                             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                            Console.WriteLine("updateStatusOnMonday 3rd Try-Catch exception:" & ex.Message)
                             pcon.Close()
 
                         End Try
@@ -593,6 +675,7 @@ sendQuery:
                 GoTo sendQuery
             ElseIf recons >= 30 Then
                 MessageBox.Show("Failed to connect to Monday. Press OK to restart", "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Console.WriteLine("updateStatusOnMonday 4th Try-Catch exception:" & ex.Message)
                 If DialogResult.OK Then
                     Application.Restart()
                 End If
@@ -604,6 +687,12 @@ sendQuery:
 
     End Function
 
+    '================================================================================
+    'FUNCTION   : SendMondayRequest
+    'DESCRIPTION: Sends a Monday.com API request.
+    'ARGUMENTS  : myQuery - String value (explicitly passed by value via ByVal declaration)
+    'RETURNS    : Task - asynchronous operation that returns a data type of Object
+    '================================================================================
     Public Async Function SendMondayRequest(ByVal myQuery As String) As Task(Of Object)
         Dim options = New RestClientOptions("https://api.monday.com/v2")
         options.ThrowOnAnyError = True
@@ -615,12 +704,23 @@ sendQuery:
         request.AddHeader("Authorization", apiKey)
         request.AddQueryParameter("query", myQuery)
         Dim response = New RestResponse
-        response = Await client.PostAsync(request)
+
         'If response.IsSuccessStatusCode = True Then
         '    Return response.Content
         'Else
         '    Return False
         'End If
+
+        Try
+            'if the next line will throw an exception code of "Unauthorized",
+            'try changing the API key via the My Project -> Resources tab in the Solution Explorer.
+            response = Await client.PostAsync(request)
+        Catch ex As Exception
+            'Console.WriteLine("This is the exception for the client.PostAsync function: " & ex.Message)
+            MessageBox.Show("An error has occured while updating the Lasermet Parts Approval Board at Monday.com.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            pcon.Close()
+        End Try
+
         If response.IsSuccessStatusCode Then
             'response has a statuscode of 200
             'but it might have a parse error, which still is status 200.
@@ -636,49 +736,56 @@ sendQuery:
         End If
     End Function
 
+    '================================================================================
+    'FUNCTION   : getMondayID
+    'DESCRIPTION: Retrieves the Monday.com ID of the to-be-registered user in the selected Monday.com teams list. 
+    'ARGUMENTS  : email - String
+    'RETURNS    : Task  - asynchronous operation that returns a data type of String
+    '================================================================================
     Public Async Function getMondayID(email As String) As Task(Of String)
-
+        'prepare string to use for querying to the monday.com teams list.
         Dim getUsers As String = "query{ users{ id name email }}"
         Dim monday_id As String
 
+        'reconnection count
         Dim recons As Integer
 sendQuery:
         Try
 
             For retries = 1 To 30
-                If retries <> 30 Then
+                If retries <> 30 Then 'if retries != 30
+                    'get the table of the currently registered users in the Monday.com board.
+                    'if this function does not return anything, check the API key validity
                     Dim usersFromMonday As Object = Await SendMondayRequest(getUsers)
 
                     If usersFromMonday(0) = "error" Then
-
-                        Return $"Error occured while connecting to Monday. Retrying ({retries}/30)"
+                        Return $"Error occured while connecting to Monday.com. Retrying ({retries}/30)"
                     Else
 
                         Dim sqlQuery As String
                         Dim responseString As String
 
+                        'the MondayUsers class contains the data and the account ID. see above declaration
                         Dim mondayUsersList As MondayUsers = JsonConvert.DeserializeObject(Of MondayUsers)(usersFromMonday(1))
 
+                        'loops the monday users list to check for the user's email
+                        'there is something wrong in this part
                         For Each user In mondayUsersList.data.users
-
+                            'if the current selected email = user's email, assign the user id to the monday_id
                             If user.email = email Then
                                 monday_id = user.id
                             End If
-
                         Next
-
 
                         recons = 0
 
                         Return monday_id
-
                     End If
                 End If
             Next
 
-
-
         Catch ex As Exception
+            Console.WriteLine("This is the error message: " + ex.Message)
             If recons > 0 And recons < 30 Then
                 recons += 1
                 Return $"Attempting to reconnect to Monday {recons}/30"

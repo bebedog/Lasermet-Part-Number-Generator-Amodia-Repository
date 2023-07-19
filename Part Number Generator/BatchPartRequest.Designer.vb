@@ -101,7 +101,7 @@ Partial Class BatchPartRequest
         Me.btnSendRequest.Name = "btnSendRequest"
         Me.btnSendRequest.Size = New System.Drawing.Size(177, 32)
         Me.btnSendRequest.TabIndex = 21
-        Me.btnSendRequest.Text = "Send  Request"
+        Me.btnSendRequest.Text = "Send Request"
         Me.btnSendRequest.UseSelectable = True
         '
         'btnGetTemplate
@@ -131,7 +131,7 @@ Partial Class BatchPartRequest
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "BatchPartRequest"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "BatchPartRequest"
+        Me.Text = "Batch Part Request"
         CType(Me.dgvBatchRequest, System.ComponentModel.ISupportInitialize).EndInit()
         Me.StatusStrip1.ResumeLayout(False)
         Me.StatusStrip1.PerformLayout()

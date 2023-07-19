@@ -1,12 +1,30 @@
-﻿Imports Newtonsoft.Json
+﻿'================================================================================
+'FILE        : LasermetPNG.vb
+'AUTHORS     : Jayson O. Amodia, Elyn Abby Toledo, Kathryn Marie P. Sigaya
+'DESCRIPTION : This file shows the processes and design menu of the Single Master List Request Menu of the Part Number Generator.
+'COPYRIGHT   : 12 July 2023
+'REVISION HISTORY
+'Date: 			By: 		Description:
+'2023/07/12     Sigaya      Documentation
+'================================================================================
+
+Imports Newtonsoft.Json
 Imports System.Threading
 
-
+'================================================================================
+'CLASS       : LasermetPNG
+'DESCRIPTION : Class that stores variables, functions, and other classes for the Single Master List Request Menu
+'================================================================================
 Public Class LasermetPNG
 
     Public categoriesTable As New DataTable
     Public partsTable As New DataTable
 
+    '================================================================================
+    'SUBROUTINE   : populateSubcategories
+    'DESCRIPTION  : Prepare the subcategories table.
+    'ARGUMENTS    : category - String
+    '================================================================================
     Private Sub populateSubcategories(ByVal category As String)
 
         Dim subcategories As New List(Of String)
@@ -27,6 +45,11 @@ Public Class LasermetPNG
         cbSubcategories.SelectedIndex = 0
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : populateCategories
+    'DESCRIPTION  : Prepare the categoriesTable table.
+    'ARGUMENTS    : category - String
+    '================================================================================
     Public Sub populateCategories(ByVal dept As String)
 
         categoriesTable.Columns.Clear()
@@ -89,11 +112,13 @@ Public Class LasermetPNG
             Console.WriteLine(ex.Message)
             pcon.Close()
         End Try
-
-
-
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : populateGroupNames
+    'DESCRIPTION  : Prepare the groupnames list.
+    'ARGUMENTS    : subcategory - String that is passed by value 
+    '================================================================================
     Private Sub populateGroupNames(ByVal subcategory As String)
 
         Dim groupnames As New List(Of String)
@@ -117,6 +142,11 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : disableControls
+    'DESCRIPTION  : Disables all controls in the current menu.
+    'ARGUMENTS    : none
+    '================================================================================
     Private Sub disableControls()
 
         For Each c As Control In Me.Controls
@@ -125,6 +155,11 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : enableControls
+    'DESCRIPTION  : Enables all controls in the current menu.
+    'ARGUMENTS    : none
+    '================================================================================
     Private Sub enableControls()
 
         For Each c As Control In Me.Controls
@@ -133,7 +168,19 @@ Public Class LasermetPNG
 
     End Sub
 
-    Public Async Sub generatePartNo(ByVal category As String, ByVal subcategory As String, ByVal groupName As String, ByVal location As String, ByVal description As String, ByVal specs As String, ByVal comments As String, drawing_no As String, UKNomCode As String, UKCC As String, supplier As String, mpn As String, srn As String, warehouse As String)
+    '================================================================================
+    'SUBROUTINE   : generatePartNo
+    'DESCRIPTION  : Generates the part number details of the part number request.
+    'ARGUMENTS    : category, subcategory, groupName, location, description, specs, comments - String that is passed by value
+    '               drawing_no, UKNomCode, UKCC, supplier, mpn, srn, warehouse - String
+    '================================================================================
+    Public Async Sub generatePartNo(ByVal category As String, ByVal subcategory As String,
+                                    ByVal groupName As String, ByVal location As String,
+                                    ByVal description As String, ByVal specs As String,
+                                    ByVal comments As String, drawing_no As String,
+                                    UKNomCode As String, UKCC As String,
+                                    supplier As String, mpn As String,
+                                    srn As String, warehouse As String)
 
         If checkForDuplicates(description) = False Then
 
@@ -257,6 +304,9 @@ Public Class LasermetPNG
                                     Case "Dept. Manager"
                                         Me.Close()
                                         InventoryAdminDashboard.Show()
+                                    Case "Gen. Manager"
+                                        Me.Close()
+                                        InventoryAdminDashboard.Show()
                                 End Select
                             End If
                         End If
@@ -286,6 +336,12 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : LasermetPNG_Load
+    'DESCRIPTION  : Loads the Single Master List Request Form Menu.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub LasermetPNG_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Me.Text = "Single Master List Request"
@@ -303,10 +359,16 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : cbCategories_SelectedIndexChanged
+    'DESCRIPTION  : Clears the items in the menu. Sets the nominal codes and cost center if the user selected Bournemouth.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub cbCategories_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbCategories.SelectedIndexChanged
 
         If cbCategories.Items.IndexOf(cbCategories.Text) < 0 Then
-            MessageBox.Show("Category Not Found. Please select from the list we provided", "Inpur Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Category not found. Please select from the list provided.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Else
             cbSubcategories.Items.Clear()
             populateSubcategories(cbCategories.SelectedItem)
@@ -316,10 +378,16 @@ Public Class LasermetPNG
         End If
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : cbSubcategories_SelectedIndexChanged
+    'DESCRIPTION  : Clears the items in the menu. Populates the group names for the subcategories.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub cbSubcategories_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbSubcategories.SelectedIndexChanged
 
         If cbSubcategories.Items.IndexOf(cbSubcategories.Text) < 0 Then
-            MessageBox.Show("Subcategory Not Found. Please select from the list we provided", "Inpur Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Subcategory not found. Please select from the list provided", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         Else
             cbGroupNames.Items.Clear()
             populateGroupNames(cbSubcategories.SelectedItem)
@@ -327,6 +395,12 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : btnSendRequest_Click
+    'DESCRIPTION  : Checks the inputted details in the form and sends the request to the Monday.com board and the database.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnSendRequest_Click(sender As Object, e As EventArgs) Handles btnSendRequest.Click
 
         Dim specs As String
@@ -386,6 +460,13 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : btnBack_Click
+    'DESCRIPTION  : Displays the dashboard according to the account type of the user after
+    '               clicking Back.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub btnBack_Click(sender As Object, e As EventArgs) Handles btnBack.Click
         Select Case login.account_type
             Case "App Admin"
@@ -404,9 +485,19 @@ Public Class LasermetPNG
                 Me.Close()
                 AppAdminDashboard.Show()
 
+            Case "Gen. Manager"
+                Me.Close()
+                InventoryAdminDashboard.Show()
+
         End Select
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : cbDepartment_SelectedIndexChanged
+    'DESCRIPTION  : Populates the categories list.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub cbDepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbDepartment.SelectedIndexChanged
 
         cbCategories.Items.Clear()
@@ -414,6 +505,11 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : setNominalCodesAndCostCenter
+    'DESCRIPTION  : Sets the Nominal Codes and the Cost Center in the request form.
+    'ARGUMENTS    : category - String
+    '================================================================================
     Private Sub setNominalCodesAndCostCenter(category As String)
 
         For Each dr As DataRow In login.categoriesTable.Rows
@@ -430,6 +526,12 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : cbLocation_SelectedIndexChanged
+    'DESCRIPTION  : Changes the warehouse location depending on the location that is set.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub cbLocation_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbLocation.SelectedIndexChanged
 
         If cbLocation.Text = "United Kingdom" Then
@@ -453,6 +555,12 @@ Public Class LasermetPNG
 
     End Sub
 
+    '================================================================================
+    'SUBROUTINE   : cbWarehouse_SelectedIndexChanged
+    'DESCRIPTION  : Changes the UK Nominal Code and the UKCC.
+    'ARGUMENTS    : sender - Object
+    '               e      - EventArgs
+    '================================================================================
     Private Sub cbWarehouse_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbWarehouse.SelectedIndexChanged
 
         If cbWarehouse.Text = "Bournemouth" Or cbWarehouse.Text = "Haydock" Then
@@ -476,9 +584,6 @@ Public Class LasermetPNG
         End If
 
     End Sub
-
-
-
 
     'Private Sub cbDepartment_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cbDepartment.SelectedIndexChanged
 
