@@ -184,9 +184,7 @@ Public Class RequestAccount
             If c.GetType Is GetType(MetroFramework.Controls.MetroComboBox) Or c.GetType Is GetType(MetroFramework.Controls.MetroTextBox) Then
 
                 If String.IsNullOrWhiteSpace(c.Text) Then
-                    emptyFields = emptyFields + 1
-                Else
-                    emptyFields = emptyFields + 0
+                    emptyFields += 1
                 End If
 
             End If

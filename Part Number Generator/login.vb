@@ -107,9 +107,9 @@ Public Class login
                 If (numberOfUpdates > 0) Then
                     'this means that there is a new update.
                     Dim latestVersion = results.ReleasesToApply(numberOfUpdates - 1).Version.ToString
+                    Await manager.UpdateApp()
                     MessageBox.Show($"Lasermet Part Number Generator v{latestVersion} is now available on GitHub." + Environment.NewLine +
                                     $"Once this instance is closed, please reopen the program.", "Update available!", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                    Await manager.UpdateApp()
                     Application.Exit()
                 Else
                     'no new update.
@@ -219,7 +219,6 @@ Public Class login
                                             Me.Hide()
                                             InventoryAdminDashboard.Show()
                                         End If
-                                        'TO-DO: put a 
                                 End Select
 
                             Else
@@ -360,7 +359,6 @@ Public Class login
     Private Sub btnLogin_Click(sender As Object, e As EventArgs) Handles btnLogin.Click
         disableAllControls()
         checkAccountCred()
-
     End Sub
 
     '================================================================================
@@ -369,11 +367,9 @@ Public Class login
     'ARGUMENTS    : None
     '================================================================================
     Private Sub login_keyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles tbPassword.KeyDown
-
         If e.KeyCode = Keys.Enter Then
             checkAccountCred()
         End If
-
     End Sub
 
     '================================================================================

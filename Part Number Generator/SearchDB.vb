@@ -181,6 +181,7 @@ Public Class SearchDB
         panelMasterListOptions.Show()
 
         Dim categories As New List(Of String)
+        
 
         For Each dr As DataRow In login.categoriesTable.Rows
             categories.Add(dr(0))
@@ -477,20 +478,20 @@ Public Class SearchDB
         dgvSearchResults.Size = New Size(Me.Width - 32, Me.Height - 152)
         dgvSearchResults.Location = New Point(8, 42)
         dgvSearchResults.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-
-
-
         Me.Text = "New Master List Requests"
 
         Call connectPostGre()
 
+        resultsTable.Rows.Clear()
         resultsTable.Columns.Clear()
+
+        dgvSearchResults.Rows.Clear()
         dgvSearchResults.Columns.Clear()
         ToolStripStatusLabel1.Text = "(̿▀̿ ̿Ĺ̯̿̿▀̿ ̿)̄"
 
         Try
 
-            Dim sqlQuery As String
+            Dim sqlQuery As String = ""
 
             'no case for general user
             Select Case login.account_type
@@ -510,9 +511,12 @@ Public Class SearchDB
             pda.SelectCommand = New Odbc.OdbcCommand(sqlQuery, pcon)
             Dim dtable As New DataTable()
 
+
             pcon.Open()
             pda.Fill(dtable)
             pcon.Close()
+
+
 
             resultsTable.Columns.Add("Lasermet_Part_Num")
             resultsTable.Columns.Add("Lasermet_Drawing_No")
@@ -539,9 +543,12 @@ Public Class SearchDB
             resultsTable.Columns.Add("Final_Approval")
             resultsTable.Columns.Add("Final_Approval_Date")
 
-            For Each dr As DataRow In dtable.Rows
 
-                Dim row As DataRow = resultsTable.NewRow()
+
+            For Each dr As DataRow In dtable.Rows
+                Console.WriteLine(dtable.Rows.IndexOf(dr))
+                Dim row As DataRow = Nothing
+                row = resultsTable.NewRow()
 
                 row.Item("Lasermet_Part_Num") = dr(0)
                 row.Item("Lasermet_Drawing_No") = dr(11)
@@ -568,7 +575,13 @@ Public Class SearchDB
                 row.Item("Final_Approval") = dr(15)
                 row.Item("Final_Approval_Date") = dr(19)
 
-                resultsTable.Rows.Add(row)
+                'if (dt.Rows != null && dt.Rows.Count > 0)
+                If dr IsNot Nothing Then
+                    resultsTable.Rows.Add(row)
+                Else
+                    Console.WriteLine("empty row detected.")
+                End If
+
 
             Next
 
@@ -1920,12 +1933,12 @@ Public Class SearchDB
     '               headers  - Boolean, optional
     '               delim    - String
     '===============================================================================
-    Private Function dtTableToCSV(dt As DataTable, filename As String,
+    Private Sub dtTableToCSV(dt As DataTable, filename As String,
                                   Optional headers As Boolean = True,
                                   Optional delim As String = ",")
         Try
             btnExport.Enabled = False
-            Dim txt As String
+            Dim txt As String = ""
             Dim csvWriter As IO.StreamWriter = IO.File.AppendText(filename)
             Dim fileloc As String = filename
             Dim n = 0
@@ -2006,5 +2019,5 @@ Public Class SearchDB
                 btnExport.Enabled = True
             End If
         End Try
-    End Function
+    End Sub
 End Class

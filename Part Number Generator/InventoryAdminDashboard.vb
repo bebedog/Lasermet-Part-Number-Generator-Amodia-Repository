@@ -10,7 +10,6 @@
         'SearchDB.dgvSearchResults.Size = New Size(768, 448)
         'SearchDB.dgvSearchResults.Location = New Point(8, 42)
         'SearchDB.Location = New Point(0, 0)
-        Me.Close()
         SearchDB.Show()
 
     End Sub
